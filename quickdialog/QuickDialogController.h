@@ -18,8 +18,8 @@
 
 @private
     QRootElement *_root;
-    id <UITableViewDataSource> _dataSource;
-    id <UITableViewDelegate> _delegate;
+    //    id <UITableViewDataSource> _dataSource;
+    //    id <UITableViewDelegate> _delegate;
     QuickDialogTableView * _quickDialogTableView;
 
     void (^_willDisappearCallback)(void);
@@ -45,5 +45,11 @@
 + (QuickDialogController *)controllerForRoot:(QRootElement *)root;
 
 + (UINavigationController *)controllerWithNavigationForRoot:(QRootElement *)root;
+
+- (void) hideElementsWithInsertAnimation:(UITableViewRowAnimation)insertAnimation removeAnimation:(UITableViewRowAnimation)removeAnimation elements:(QElement*)element,...;
+- (void) hideSectionsWithInsertAnimation:(UITableViewRowAnimation)insertAnimation removeAnimation:(UITableViewRowAnimation)removeAnimation sections:(QSection*)section,...;
+
+- (void) hideElementsWithAnimation:(UITableViewRowAnimation)animation elements:(QElement*)element,...;
+- (void) hideSectionsWithAnimation:(UITableViewRowAnimation)animation sections:(QSection*)section,...;
 
 @end

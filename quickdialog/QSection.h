@@ -17,6 +17,8 @@
 
 @class QRootElement;
 @class QElement;
+@class QuickDialogTableView;
+@class QuickDialogController;
 
 @interface QSection : NSObject {
 
@@ -45,16 +47,16 @@
 @property(nonatomic, readonly) BOOL needsEditing;
 
 @property(nonatomic, retain) UIView *headerView;
-@property(nonatomic, retain) NSString *headerImage;
+@property(nonatomic, retain) NSArray *headerItems;
 
 @property(nonatomic, retain) UIView *footerView;
-@property(nonatomic, retain) NSString *footerImage;
+@property(nonatomic, retain) NSArray *footerItems;
 
 @property(nonatomic) CGRect entryPosition;
 @property(nonatomic, strong) NSDictionary *elementTemplate;
 
-
-@property(nonatomic, assign) BOOL canDeleteRows;
+@property(nonatomic, assign) BOOL hidden;
+@property(nonatomic, readonly) NSUInteger visibleIndex;
 
 - (QSection *)initWithTitle:(NSString *)string;
 
@@ -62,7 +64,15 @@
 - (void)insertElement:(QElement *)element atIndex:(NSUInteger)index;
 - (NSUInteger)indexOfElement:(QElement *)element;
 
+- (QElement *)getVisibleElementForIndex:(NSInteger)index;
+- (NSInteger)visibleNumberOfElements;
+- (NSUInteger)getVisibleIndexForElement:(QElement*)element;
+
+- (UIView*) getHeaderViewForTable:(QuickDialogTableView*)tableView controller:(QuickDialogController*)controller;
+- (UIView*) getFooterViewForTable:(QuickDialogTableView*)tableView controller:(QuickDialogController*)controller;
+
 - (void)bindToObject:(id)data;
 - (void)fetchValueIntoObject:(id)obj;
 - (void)fetchValueUsingBindingsIntoObject:(id)data;
+
 @end

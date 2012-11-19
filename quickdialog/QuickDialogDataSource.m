@@ -13,7 +13,6 @@
 //
 
 #import "QuickDialogDataSource.h"
-#import "QSortingSection.h"
 
 @implementation QuickDialogDataSource
 
@@ -26,51 +25,47 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_tableView.root getSectionForIndex:section].elements.count;
+    return [_tableView.root getSectionForIndex:section].visibleNumberOfElements;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    QSection *section = [_tableView.root getSectionForIndex:indexPath.section];
-    QElement *element = [section.elements objectAtIndex:(NSUInteger) indexPath.row];
+    QSection *section = [_tableView.root getVisibleSectionForIndex:indexPath.section];
+    QElement *element = [section getVisibleElementForIndex:indexPath.row];
     UITableViewCell *cell = [element getCellForTableView:(QuickDialogTableView *) tableView controller:_tableView.controller];
     return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [_tableView.root numberOfSections];
+    return [_tableView.root visibleNumberOfSections];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return [_tableView.root getSectionForIndex:section].title;
+    return [_tableView.root getVisibleSectionForIndex:section].title;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    return [_tableView.root getSectionForIndex:section].footer;
+    return [_tableView.root getVisibleSectionForIndex:section].footer;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [[_tableView.root getSectionForIndex:indexPath.section] isKindOfClass:[QSortingSection class]];
+    QSortingSection * q = (id)[_tableView.root getVisibleSectionForIndex:indexPath.section];
+    return q.canReorderRows && [q canRemoveElementForRow:indexPath.row];
 }
 
-
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    QSortingSection *section = ((QSortingSection *) [_tableView.root.sections objectAtIndex:(NSUInteger) indexPath.section]);
-    if ([section removeElementForRow:indexPath.row]){
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }
+    QSortingSection *section = (id)[_tableView.root getVisibleSectionForIndex:indexPath.section];
+    [section removeElementForRow:indexPath.row];
+    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
-    QSortingSection *section = ((QSortingSection *) [_tableView.root.sections objectAtIndex:(NSUInteger) sourceIndexPath.section]);
-    [section moveElementFromRow:(NSUInteger) sourceIndexPath.row toRow:(NSUInteger) destinationIndexPath.row];
+    QSortingSection *section = (id)[_tableView.root getVisibleSectionForIndex: sourceIndexPath.section];
+    [section moveElementFromRow:sourceIndexPath.row toRow:destinationIndexPath.row];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    QSection  *section = [_tableView.root.sections objectAtIndex:(NSUInteger) indexPath.section];
-    if ([section isKindOfClass:[QSortingSection class]]){
-        return ([(QSortingSection *) section canRemoveElementForRow:indexPath.row]);
-    }
-    return tableView.editing;
+    QSortingSection  *section = (id)[_tableView.root getVisibleSectionForIndex: indexPath.section];
+    return section.needsEditing && ((section.canDeleteRows && [section canRemoveElementForRow:indexPath.row]) || (section.canReorderRows && [section canMoveElementForRow:indexPath.row]));
 }
 
 @end

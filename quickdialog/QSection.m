@@ -13,13 +13,11 @@
 //
 
 #import "QBindingEvaluator.h"
+#import "QSectionToolbar.h"
 
 @implementation QSection {
 @private
-    NSString *_headerImage;
-    NSString *_footerImage;
     NSDictionary *_elementTemplate;
-    BOOL _canDeleteRows;
     NSMutableArray *_afterTemplateElements;
     NSMutableArray *_beforeTemplateElements;
 }
@@ -32,28 +30,55 @@
 @synthesize headerView = _headerView;
 @synthesize footerView = _footerView;
 @synthesize entryPosition = _entryPosition;
-@synthesize headerImage = _headerImage;
-@synthesize footerImage = _footerImage;
+@synthesize headerItems = _headerItems;
+@synthesize footerItems = _footerItems;
 @synthesize elementTemplate = _elementTemplate;
-@synthesize canDeleteRows = _canDeleteRows;
 @synthesize afterTemplateElements = _afterTemplateElements;
 @synthesize beforeTemplateElements = _beforeTemplateElements;
 
+@synthesize hidden = _hidden;
+@dynamic visibleIndex;
+
+- (QElement *)getVisibleElementForIndex:(NSInteger)index
+{
+    for (QElement * q in self.elements)
+    {
+        if (!q.hidden && index-- == 0)
+            return q;
+    }
+    return nil;
+}
+- (NSInteger)visibleNumberOfElements
+{
+    NSUInteger c = 0;
+    for (QElement * q in self.elements)
+    {
+        if (!q.hidden)
+            c++;
+    }
+    return c;
+}
+
+- (NSUInteger)getVisibleIndexForElement:(QElement*)element
+{
+    NSUInteger c = 0;
+    for (QElement * q in self.elements)
+    {
+        if (q == element)
+            return c;
+        if (!q.hidden)
+            ++c;
+    }
+    return NSNotFound;
+}
+
+- (NSUInteger) visibleIndex
+{
+    return [self.rootElement getVisibleIndexForSection:self];
+}
 
 - (BOOL)needsEditing {
     return NO;
-}
-
-- (void)setFooterImage:(NSString *)imageName {
-    _footerImage = imageName;
-    self.footerView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:_footerImage]];
-    self.footerView.contentMode = UIViewContentModeCenter;
-}
-
-- (void)setHeaderImage:(NSString *)imageName {
-    _headerImage = imageName;
-    self.headerView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:_headerImage]];
-    self.headerView.contentMode = UIViewContentModeCenter;
 }
 
 - (QSection *)initWithTitle:(NSString *)sectionTitle {
@@ -92,6 +117,26 @@
     return NSNotFound;
 }
 
+
+- (UIView*) getHeaderViewForTable:(QuickDialogTableView*)tableView controller:(QuickDialogController*)controller
+{
+    if (_headerView)
+        return _headerView;
+    if (_headerItems)
+        return [[QSectionToolbar alloc] initWithElements:_headerItems controller:controller];
+
+    return nil;
+}
+- (UIView*) getFooterViewForTable:(QuickDialogTableView*)tableView controller:(QuickDialogController*)controller
+{
+    if (_footerView)
+        return _footerView;
+    if (_footerItems)
+        return [[QSectionToolbar alloc] initWithElements:_footerItems controller:controller];
+
+    return nil;
+}
+
 - (void)fetchValueIntoObject:(id)obj {
     for (QElement *el in elements){
         [el fetchValueIntoObject:obj];
@@ -118,8 +163,12 @@
 }
 
 - (void)fetchValueUsingBindingsIntoObject:(id)data {
-    for (QElement *el in self.elements) {
-        [el fetchValueUsingBindingsIntoObject:data];
+    if ([self.bind length]==0 || [self.bind rangeOfString:@"iterate"].location == NSNotFound) {
+        for (QElement *el in self.elements) {
+            [el fetchValueUsingBindingsIntoObject:data];
+        }
+    } else {
+        [[QBindingEvaluator new] fetchValueFromSection:self toData:data];
     }
 
 }

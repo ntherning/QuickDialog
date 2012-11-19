@@ -44,30 +44,18 @@
 
 -(void)setRoot:(QRootElement *)root{
     _root = root;
-    for (QSection *section in _root.sections) {
-        if (section.needsEditing == YES){
-            [self setEditing:YES animated:YES];
-            self.allowsSelectionDuringEditing = YES;
-        }
-    }
+    [self setEditing:root.needsEditing animated:YES];
+    self.allowsSelectionDuringEditing = YES;
     [self reloadData];
 }
 
 - (NSIndexPath *)indexForElement:(QElement *)element {
-    for (int i=0; i< [_root.sections count]; i++){
-        QSection * currSection = [_root.sections objectAtIndex:(NSUInteger) i];
-
-        for (int j=0; j< [currSection.elements count]; j++){
-            QElement *currElement = [currSection.elements objectAtIndex:(NSUInteger) j];
-            if (currElement == element){
-                return [NSIndexPath indexPathForRow:j inSection:i];
-            }
-        }
-    }
-    return NULL;
+    return element.getIndexPath;
 }
 
 - (UITableViewCell *)cellForElement:(QElement *)element {
+    if (element.hidden)
+        return nil;
     return [self cellForRowAtIndexPath:[self indexForElement:element]];
 }
 
@@ -88,14 +76,13 @@
     NSMutableArray *indexes = [[NSMutableArray alloc] init];
     QElement * element = firstElement;
     while (element != nil) {
-        [indexes addObject:[self indexForElement:element]];
+        if (!element.hidden)
+            [indexes addObject:element.getIndexPath];
         element = va_arg(args, QElement *);
     }
     [self reloadRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationNone];
 
     va_end(args);
 }
-
-
 
 @end
