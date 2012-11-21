@@ -62,6 +62,10 @@
 
 - (void)addElement:(QElement *)element;
 - (void)insertElement:(QElement *)element atIndex:(NSUInteger)index;
+- (void)removeElement:(QElement *)element;
+- (void)removeElementAtIndex:(NSUInteger)index;
+- (void)removeAllElements;
+- (void)removeElementsInRange:(NSRange)range;
 - (NSUInteger)indexOfElement:(QElement *)element;
 
 - (QElement *)getVisibleElementForIndex:(NSInteger)index;

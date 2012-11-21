@@ -109,6 +109,52 @@
     [self.elements insertObject:element atIndex:index];
 }
 
+- (void)removeElementAtIndex:(NSUInteger)index
+{
+    if (self.elements == nil) {
+        return;
+    }
+
+    QElement *element = [self.elements objectAtIndex:index];
+    [self.elements removeObjectAtIndex:index];
+    element.parentSection = nil;
+}
+
+- (void)removeElement:(QElement *)element
+{
+    if (self.elements == nil) {
+        return;
+    }
+    
+    element.parentSection = nil;
+    [self.elements removeObject:element];
+}
+
+- (void)removeElementsInRange:(NSRange)range
+{
+    if (self.elements == nil) {
+        return;
+    }
+    
+    for (int i = 0; i < range.length; i++) {
+        QElement *element = [self.elements objectAtIndex:range.location];
+        [self.elements removeObjectAtIndex:range.location];
+        element.parentSection = nil;
+    }
+}
+
+- (void)removeAllElements
+{
+    if (self.elements == nil) {
+        return;
+    }
+    
+    for (QElement * element in self.elements) {
+        element.parentSection = nil;
+    }
+    [self.elements removeAllObjects];
+}
+
 - (NSUInteger)indexOfElement:(QElement *)element
 {
     if (self.elements) {
