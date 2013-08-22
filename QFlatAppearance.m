@@ -49,7 +49,7 @@
     
 #if __IPHONE_7_0
     self.valueFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    self.labelFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    self.labelFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline1];
     self.entryFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
 #endif
     
