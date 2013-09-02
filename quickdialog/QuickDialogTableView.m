@@ -55,20 +55,32 @@
     [self reloadData];
 }
 
+- (void)reloadData
+{
+    [self applyAppearanceForRoot:self.root];
+    [super reloadData];
+}
+
+
 - (void)applyAppearanceForRoot:(QRootElement *)element {
     if (element.appearance.tableGroupedBackgroundColor !=nil){
         
         self.backgroundColor = element.grouped 
-                ? element.appearance.tableGroupedBackgroundColor 
+                ? element.appearance.tableGroupedBackgroundColor
                 : element.appearance.tableBackgroundColor;
 
         self.backgroundView = element.appearance.tableBackgroundView;
     }
-    if (element.appearance.tableBackgroundView!=nil)
+    if (element.appearance.tableBackgroundView!=nil && !element.grouped)
         self.backgroundView = element.appearance.tableBackgroundView;
+
+    if (element.appearance.tableGroupedBackgroundView!=nil && element.grouped)
+        self.backgroundView = element.appearance.tableGroupedBackgroundView;
 
     if (element.appearance.tableSeparatorColor!=nil)
         self.separatorColor = element.appearance.tableSeparatorColor;
+    
+    self.separatorStyle = element.appearance.tableSeparatorStyle;
 
 }
 
@@ -86,15 +98,21 @@
     return NULL;
 }
 
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    super.contentInset = contentInset;
+    self.scrollIndicatorInsets = contentInset;
+}
+
+
 - (UITableViewCell *)cellForElement:(QElement *)element {
     if (element.hidden)
         return nil;
     return [self cellForRowAtIndexPath:[element getIndexPath]];
 }
 
-- (void)viewWillAppear {
-
-    [self applyAppearanceForRoot:self.root];
+- (void)deselectRows
+{
     NSArray *selected = nil;
     if ([self indexPathForSelectedRow]!=nil && _deselectRowWhenViewAppears){
         NSIndexPath *selectedRowIndex = [self indexPathForSelectedRow];

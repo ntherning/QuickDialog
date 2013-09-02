@@ -43,6 +43,12 @@
     return nil;
 }
 
+-(void)setIconNamed:(NSString *)name {
+#if __IPHONE_7_0
+    self.image = [[UIImage imageNamed:name] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+#endif
+}
+
 
 - (UITableViewCell *)getCellForTableView:(QuickDialogTableView *)tableView controller:(QuickDialogController *)controller {
     QTableViewCell *cell = (QTableViewCell *) [super getCellForTableView:tableView controller:controller];

@@ -31,12 +31,14 @@
 @property(nonatomic) NSTextAlignment buttonAlignment;
 @property(nonatomic, strong) UIView *selectedBackgroundView;
 @property(nonatomic, strong) UIColor *sectionTitleShadowColor;
+@property(nonatomic) BOOL toolbarTranslucent;
+@property(nonatomic) CGFloat cellBorderWidth;
 
 @property(nonatomic) UIBarStyle toolbarStyle;
+@property(nonatomic) UITableViewCellSeparatorStyle tableSeparatorStyle;
 
-@property(nonatomic) BOOL toolbarTranslucent;
 
-@property(nonatomic) CGFloat cellBorderWidth;
+@property(nonatomic, strong) UIView *tableGroupedBackgroundView;
 
 - (void)setDefaults;
 
