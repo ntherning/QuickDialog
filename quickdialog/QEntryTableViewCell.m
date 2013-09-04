@@ -13,6 +13,7 @@
 //
 
 #import "QEntryTableViewCell.h"
+#import "QPickerTableViewCell.h"
 #import "QuickDialog.h"
 
 @interface QEntryTableViewCell ()
@@ -192,7 +193,22 @@
     if(_entryElement && _entryElement.delegate && [_entryElement.delegate respondsToSelector:@selector(QEntryDidEndEditingElement:andCell:)]){
         [_entryElement.delegate QEntryDidEndEditingElement:_entryElement andCell:self];
     }
-    
+
+    //@FIX, fix for QPickerTableViewCell not triggering onValueChange when user taps Done
+    if([self isKindOfClass:[QPickerTableViewCell class]])
+    {
+        QPickerTableViewCell *cell=(QPickerTableViewCell *)self;
+        QPickerElement *pickerElement=(QPickerElement *)_entryElement;
+        
+        pickerElement.value=[cell getPickerViewValue];
+        [self prepareForElement:_entryElement inTableView:_quickformTableView];
+        if (pickerElement.onValueChanged != nil)
+        {
+            pickerElement.onValueChanged(nil);
+        }
+    }
+    //@FIX END
+
     [_entryElement performSelector:@selector(fieldDidEndEditing)];
 }
 
