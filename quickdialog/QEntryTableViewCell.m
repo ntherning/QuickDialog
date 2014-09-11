@@ -16,6 +16,7 @@
 #import "QPickerTableViewCell.h"
 #import "QuickDialog.h"
 #import "QTextField.h"
+#import "QPickerElement.h"
 
 @interface QEntryTableViewCell ()
 - (void)handleActionBarPreviousNext:(UISegmentedControl *)control;
