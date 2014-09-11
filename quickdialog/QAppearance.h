@@ -33,9 +33,10 @@
 @property(nonatomic, strong) UIColor *sectionTitleShadowColor;
 @property(nonatomic) BOOL toolbarTranslucent;
 @property(nonatomic) CGFloat cellBorderWidth;
+@property(nonatomic) NSNumber * defaultHeightForHeader;
+@property(nonatomic) NSNumber * defaultHeightForFooter;
 
 @property(nonatomic) UIBarStyle toolbarStyle;
-@property(nonatomic) UITableViewCellSeparatorStyle tableSeparatorStyle;
 
 
 @property(nonatomic, strong) UIView *tableGroupedBackgroundView;
